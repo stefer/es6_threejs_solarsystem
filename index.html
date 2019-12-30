@@ -38,6 +38,7 @@
     renderer.antialias = true;
 
 	var onRenderFcts= [];
+	var sunScene	= new THREE.Scene(); // Use a separate scene for sun and ambient light to make it shine
 	var scene	= new THREE.Scene();
 	var camera	= new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.01, 1000 );
 	camera.position.z = 1.5;
@@ -51,24 +52,23 @@
     controls.maxDistance = 5000;
     controls.maxPolarAngle = Math.PI / 2;
 
-	var light	= new THREE.AmbientLight( 0x888888, 2 )
-	scene.add( light )
-
-    var pointLight = new THREE.PointLight( 0xffffff, 10, 500, 1);
-    pointLight.position.set( 0, 0, 0 );
-    scene.add( pointLight );
-
-    var sphereSize = SunSize;
-    var pointLightHelper = new THREE.PointLightHelper( pointLight, sphereSize );
-    scene.add( pointLightHelper );
+	var light	= new THREE.AmbientLight( 0x888888, 3 )
+	sunScene.add( light )
 
     var geometry = new THREE.SphereBufferGeometry(SunSize, 32, 32)
     var material = new THREE.MeshPhongMaterial()
     material.map = THREE.ImageUtils.loadTexture('textures/2k_sun.jpg')
-    material.emessive = new THREE.Color( 0xffffff );
-    material.emissiveIntensity = 10;
     var sunMesh = new THREE.Mesh(geometry, material)
-    scene.add(sunMesh)
+    sunScene.add(sunMesh)
+
+    var pointLight = new THREE.PointLight( 0xffffff, 1, 500, 1);
+    pointLight.position.set( 0, 0, 0 );
+    scene.add( pointLight );
+    var pointLightHelper = new THREE.PointLightHelper( pointLight, SunSize );
+    scene.add( pointLightHelper );
+
+	var light	= new THREE.AmbientLight( 0x888888, 0.2 )
+	scene.add( light )
 
     var curve = new THREE.EllipseCurve(
         0,  0,            // ax, aY
@@ -84,17 +84,20 @@
     var ellipse = new THREE.Line( geometry, material );
     scene.add(ellipse);
 
-    var geometry1 = new THREE.SphereBufferGeometry(EarthSize*10, 32, 32);
+    var geometry1 = new THREE.SphereBufferGeometry(EarthSize*100, 32, 32);
     var material1 = new THREE.MeshPhongMaterial()
     material1.map = THREE.ImageUtils.loadTexture('textures/2k_earth_daymap.jpg')
     var earthMesh = new THREE.Mesh(geometry1, material1);
-    material1.emessive = new THREE.Color( 0xffffff );
+    material1.emessive = new THREE.Color( 0x0ffff0 );
     material1.emissiveIntensity = 10;
     geometry1.translate(auUnit, 0, 0)
     scene.add(earthMesh)
 
     onRenderFcts.push(function(){
-		renderer.render( scene, camera );		
+		renderer.autoClear = false;
+        renderer.clear();
+        renderer.render( sunScene, camera );
+        renderer.render( scene, camera );	
 	})
 
 
