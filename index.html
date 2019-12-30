@@ -4,11 +4,15 @@
     <title>Sun</title>
     <style>
         h1 {text-align: center;}
-        .center {display:flex; justify-content: center; }
-        canvas {background: #eeeeee; outline: auto;}
+        canvas {
+                width: 100%;
+                height: 100%;
+                display: block;
+        }
     </style>
 </head>
 <body>
+    <canvas id = 'canvas'></canvas>
 </body>
 
 
@@ -18,31 +22,60 @@
 
     // Textures from https://www.solarsystemscope.com/textures/
     
-	var renderer	= new THREE.WebGLRenderer();
-	renderer.setSize( window.innerWidth, window.innerHeight );
-	document.body.appendChild( renderer.domElement );
+    const SizeScale = 5.0
+    const au = 149597.870700 // kkm
+    const earthEccenticity = 1.718269673643725E-02
+    const SunRadiusKkm = 696.0000;
+    const SunRadiusKmPerPixel = SunRadiusKkm / window.innerWidth;
+    const SunRadius = 0.1;
+    const SunScale = 0.1 / SunRadiusKkm; // Units/kkm
+    const auUnit = au * SunScale;
+
+    const canvas = document.querySelector('#canvas');
+	var renderer	= new THREE.WebGLRenderer({canvas});
+    renderer.setSize( canvas.clientWidth, canvas.clientHeight );
+    renderer.antialias = true;
 
 	var onRenderFcts= [];
 	var scene	= new THREE.Scene();
-	var camera	= new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000 );
+	var camera	= new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.01, 1000 );
 	camera.position.z = 1.5;
 
-	var light	= new THREE.AmbientLight( 0x888888 )
-	scene.add( light )
-	// var light	= new THREE.DirectionalLight( 'white', 1)
-	// light.position.set(5,5,5)
-	// light.target.position.set( 0, 0, 0 )
-	// scene.add( light )
-
-	var light	= new THREE.DirectionalLight( 0xcccccc, 1 )
-	light.position.set(5,3,5)
+	var light	= new THREE.AmbientLight( 0x888888, 2 )
 	scene.add( light )
 
-    var geometry = new THREE.SphereGeometry(0.5, 32, 32)
+    var pointLight = new THREE.PointLight( 0xff0000, 1, 100, 2);
+    pointLight.position.set( 0, 0, 0 );
+    scene.add( pointLight );
+
+    var sphereSize = SunRadius;
+    var pointLightHelper = new THREE.PointLightHelper( pointLight, sphereSize );
+    scene.add( pointLightHelper );
+
+    var geometry = new THREE.SphereBufferGeometry(SunRadius * SizeScale, 32, 32)
     var material = new THREE.MeshPhongMaterial()
     material.map = THREE.ImageUtils.loadTexture('textures/2k_sun.jpg')
+    material.emessive = new THREE.Color( 0xffffff );
+    material.emissiveIntensity = 10;
     var sunMesh = new THREE.Mesh(geometry, material)
     scene.add(sunMesh)
+
+    var curve = new THREE.EllipseCurve(
+        0,  0,            // ax, aY
+        auUnit, auUnit * (1.0 + earthEccenticity),           // xRadius, yRadius
+        0,  2 * Math.PI,  // aStartAngle, aEndAngle
+        false,            // aClockwise
+        0                 // aRotation
+    );
+
+    var points = curve.getPoints( 50 );
+    var geometry = new THREE.BufferGeometry().setFromPoints( points );
+
+    var material = new THREE.LineBasicMaterial( { color : 0xff0000 } );
+
+    // Create the final object to add to the scene
+    var ellipse = new THREE.Line( geometry, material );
+    scene.add(ellipse);
 
     onRenderFcts.push(function(){
 		renderer.render( scene, camera );		
@@ -58,7 +91,7 @@
     
     var scale = 1.0
     document.addEventListener('wheel', function(event){
-        scale += event.deltaY/1000;
+        scale *= (1 + (event.deltaY/1000));
         event.stopPropagation();
     }, false)
 
@@ -82,7 +115,8 @@
 		onRenderFcts.forEach(function(onRenderFct){
 			onRenderFct(deltaMsec/1000, nowMsec/1000)
 		})
-	})
+    })
+    
 </script>
 
 </html>
