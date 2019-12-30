@@ -1,0 +1,15 @@
+{
+    "typeAcquisition": {
+      "include": [
+        "js"
+      ]
+    },
+    "compilerOptions": {
+      "target": "ES6",
+      "module": "es6"
+    },
+    "exclude": [
+      "node_modules"
+    ],
+    "include": ["js/**/*"]
+  }

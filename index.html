@@ -22,17 +22,18 @@
     import * as THREE from "./js/three.module.js";
     import { MapControls } from "./js/OrbitControls.js";
 
-    const SizeScale = 5.0
+    const SizeScale = 2.0
     const au = 149597.870700 // kkm
     const earthEccenticity = 1.718269673643725E-02
     const SunRadiusKkm = 696.0000;
-    const SunRadiusKmPerPixel = SunRadiusKkm / window.innerWidth;
-    const SunRadius = 0.1;
-    const SunScale = 0.1 / SunRadiusKkm; // Units/kkm
+    const SunRadius = 0.01;
+    const SunScale = SunRadius / SunRadiusKkm; // Units/kkm
+    const SunSize = SunRadius * SizeScale;
+    const EarthSize = 6.356752 * SunScale * SizeScale;
     const auUnit = au * SunScale;
 
     const canvas = document.querySelector('#canvas');
-	var renderer	= new THREE.WebGLRenderer({canvas});
+	var renderer = new THREE.WebGLRenderer({canvas});
     renderer.setSize( canvas.clientWidth, canvas.clientHeight );
     renderer.antialias = true;
 
@@ -46,22 +47,22 @@
     controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
     controls.dampingFactor = 0.05;
     controls.screenSpacePanning = false;
-    controls.minDistance = 0;
+    controls.minDistance = 0.01;
     controls.maxDistance = 5000;
     controls.maxPolarAngle = Math.PI / 2;
 
 	var light	= new THREE.AmbientLight( 0x888888, 2 )
 	scene.add( light )
 
-    var pointLight = new THREE.PointLight( 0xff0000, 1, 100, 2);
+    var pointLight = new THREE.PointLight( 0xffffff, 10, 500, 1);
     pointLight.position.set( 0, 0, 0 );
     scene.add( pointLight );
 
-    var sphereSize = SunRadius;
+    var sphereSize = SunSize;
     var pointLightHelper = new THREE.PointLightHelper( pointLight, sphereSize );
     scene.add( pointLightHelper );
 
-    var geometry = new THREE.SphereBufferGeometry(SunRadius * SizeScale, 32, 32)
+    var geometry = new THREE.SphereBufferGeometry(SunSize, 32, 32)
     var material = new THREE.MeshPhongMaterial()
     material.map = THREE.ImageUtils.loadTexture('textures/2k_sun.jpg')
     material.emessive = new THREE.Color( 0xffffff );
@@ -79,24 +80,23 @@
 
     var points = curve.getPoints( 50 );
     var geometry = new THREE.BufferGeometry().setFromPoints( points );
-
-    var material = new THREE.LineBasicMaterial( { color : 0xff0000 } );
-
-    // Create the final object to add to the scene
+    var material = new THREE.LineBasicMaterial( { color : 0xaaaaaa } );
     var ellipse = new THREE.Line( geometry, material );
     scene.add(ellipse);
+
+    var geometry1 = new THREE.SphereBufferGeometry(EarthSize*10, 32, 32);
+    var material1 = new THREE.MeshPhongMaterial()
+    material1.map = THREE.ImageUtils.loadTexture('textures/2k_earth_daymap.jpg')
+    var earthMesh = new THREE.Mesh(geometry1, material1);
+    material1.emessive = new THREE.Color( 0xffffff );
+    material1.emissiveIntensity = 10;
+    geometry1.translate(auUnit, 0, 0)
+    scene.add(earthMesh)
 
     onRenderFcts.push(function(){
 		renderer.render( scene, camera );		
 	})
 
-	onRenderFcts.push(function(delta, now){
-		camera.position.x += (mouse.x - camera.position.x)
-		camera.position.y += (mouse.y - camera.position.y)
-        camera.lookAt( scene.position )
-        camera.zoom = scale;
-        camera.updateProjectionMatrix();
-	})
 
     var lastTimeMsec= null
 	requestAnimationFrame(function animate(nowMsec){
