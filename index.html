@@ -21,16 +21,16 @@
     
     import * as THREE from "./js/three.module.js";
     import { MapControls } from "./js/OrbitControls.js";
+    import  {Planets, Sun, Au } from "./js/SolarSystem.js";
 
     const SizeScale = 2.0
-    const au = 149597.870700 // kkm
     const earthEccenticity = 1.718269673643725E-02
     const SunRadiusKkm = 696.0000;
     const SunRadius = 0.01;
-    const SunScale = SunRadius / SunRadiusKkm; // Units/kkm
+    const SunScale = SunRadius / Sun.radius; // Units/km
     const SunSize = SunRadius * SizeScale;
-    const EarthSize = 6.356752 * SunScale * SizeScale;
-    const auUnit = au * SunScale;
+    const EarthSize = Planets.Earth.radius * SunScale * SizeScale;
+    const auUnit = Au * SunScale;
 
     const canvas = document.querySelector('#canvas');
 	var renderer = new THREE.WebGLRenderer({canvas});
@@ -70,12 +70,13 @@
 	var light	= new THREE.AmbientLight( 0x888888, 0.2 )
 	scene.add( light )
 
+    const earthInclination = Planets.Earth.inclination;
     var curve = new THREE.EllipseCurve(
         0,  0,            // ax, aY
         auUnit, auUnit * (1.0 + earthEccenticity),           // xRadius, yRadius
         0,  2 * Math.PI,  // aStartAngle, aEndAngle
         false,            // aClockwise
-        0                 // aRotation
+        earthInclination  // aRotation
     );
 
     var points = curve.getPoints( 50 );
