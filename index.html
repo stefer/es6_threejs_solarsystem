@@ -17,31 +17,25 @@
 
 <script type="module">
 
-    // Textures from https://www.solarsystemscope.com/textures/
     
     import * as THREE from "./js/three.module.js";
     import { MapControls } from "./js/OrbitControls.js";
-    import  {Planets, Sun, Au } from "./js/SolarSystem.js";
+    import { Planets, Sun, Au } from "./js/SolarSystem.js";
+    import { BodyBuilder } from "./js/three.planets.js";
 
-    const SizeScale = 2.0
-    const earthEccenticity = 1.718269673643725E-02
-    const SunRadiusKkm = 696.0000;
-    const SunRadius = 0.01;
-    const SunScale = SunRadius / Sun.radius; // Units/km
-    const SunSize = SunRadius * SizeScale;
-    const EarthSize = Planets.Earth.radius * SunScale * SizeScale;
-    const auUnit = Au * SunScale;
+    const Scale = 1.0/Au;
 
     const canvas = document.querySelector('#canvas');
 	var renderer = new THREE.WebGLRenderer({canvas});
     renderer.setSize( canvas.clientWidth, canvas.clientHeight );
     renderer.antialias = true;
 
-	var onRenderFcts= [];
+    var onRenderFcts= [];
+    var builder = new BodyBuilder(Scale, {scaleSun: 2.0, scalePlanets: 100.0, scaleOrbits: 0.1 });
 	var sunScene	= new THREE.Scene(); // Use a separate scene for sun and ambient light to make it shine
 	var scene	= new THREE.Scene();
 	var camera	= new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.01, 1000 );
-	camera.position.z = 1.5;
+	camera.position.z = 3;
 
     var controls = new MapControls( camera, renderer.domElement );
     //controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
@@ -52,47 +46,24 @@
     controls.maxDistance = 5000;
     controls.maxPolarAngle = Math.PI / 2;
 
+    // A bright ambient light for the sun
 	var light	= new THREE.AmbientLight( 0x888888, 3 )
-	sunScene.add( light )
+	sunScene.add(light)
 
-    var geometry = new THREE.SphereBufferGeometry(SunSize, 32, 32)
-    var material = new THREE.MeshPhongMaterial()
-    material.map = THREE.ImageUtils.loadTexture('textures/2k_sun.jpg')
-    var sunMesh = new THREE.Mesh(geometry, material)
-    sunScene.add(sunMesh)
-
+    // A point light at the center of the sun
     var pointLight = new THREE.PointLight( 0xffffff, 1, 500, 1);
     pointLight.position.set( 0, 0, 0 );
     scene.add( pointLight );
-    var pointLightHelper = new THREE.PointLightHelper( pointLight, SunSize );
+    var pointLightHelper = new THREE.PointLightHelper( pointLight, Sun.radius * Scale );
     scene.add( pointLightHelper );
 
-	var light	= new THREE.AmbientLight( 0x888888, 0.2 )
-	scene.add( light )
+    // A dim ambient light for all planets
+	var light = new THREE.AmbientLight( 0x888888, 0.2 )
+	scene.add(light)
 
-    const earthInclination = Planets.Earth.inclination;
-    var curve = new THREE.EllipseCurve(
-        0,  0,            // ax, aY
-        auUnit, auUnit * (1.0 + earthEccenticity),           // xRadius, yRadius
-        0,  2 * Math.PI,  // aStartAngle, aEndAngle
-        false,            // aClockwise
-        earthInclination  // aRotation
-    );
-
-    var points = curve.getPoints( 50 );
-    var geometry = new THREE.BufferGeometry().setFromPoints( points );
-    var material = new THREE.LineBasicMaterial( { color : 0xaaaaaa } );
-    var ellipse = new THREE.Line( geometry, material );
-    scene.add(ellipse);
-
-    var geometry1 = new THREE.SphereBufferGeometry(EarthSize*100, 32, 32);
-    var material1 = new THREE.MeshPhongMaterial()
-    material1.map = THREE.ImageUtils.loadTexture('textures/2k_earth_daymap.jpg')
-    var earthMesh = new THREE.Mesh(geometry1, material1);
-    material1.emessive = new THREE.Color( 0x0ffff0 );
-    material1.emissiveIntensity = 10;
-    geometry1.translate(auUnit, 0, 0)
-    scene.add(earthMesh)
+    sunScene.add(builder.buildSun());
+    builder.buildEarth().forEach(element => {scene.add(element);});
+    builder.buildMars().forEach(element => {scene.add(element);});
 
     onRenderFcts.push(function(){
 		renderer.autoClear = false;
@@ -100,7 +71,6 @@
         renderer.render( sunScene, camera );
         renderer.render( scene, camera );	
 	})
-
 
     var lastTimeMsec= null
 	requestAnimationFrame(function animate(nowMsec){

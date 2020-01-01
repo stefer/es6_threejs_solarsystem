@@ -5,7 +5,7 @@ class Body
         this._name = name || "Unknown";
         this._radius = options.radius || 0;
         this._semiAxis = options.semiAxis || 0;
-        this._eccentricity = options._eccentricity || 0;
+        this._eccentricity = options.eccentricity || 0;
         this._inclination = options.inclination || 0;
     }
 
@@ -24,6 +24,12 @@ const Planets = {
         semiAxis : 1 * Au,
         eccentricity : 1.718269673643725E-02,
         inclination : 2.885482133031596E-03 * Math.PI / 180.0
+    }),
+    Mars: new Body("mars", {
+        radius : 3396.19,
+        semiAxis : 1.523655695334521E+00 * Au,
+        eccentricity : 9.349419467092489E-02,
+        inclination : 1.848032821343787E+00 * Math.PI / 180.0
     })
 }
 
