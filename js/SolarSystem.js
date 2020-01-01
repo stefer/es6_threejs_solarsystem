@@ -19,6 +19,20 @@ class Body
 const Au = 149597870.700;
 
 const Planets = {
+    Mercury: new Body("mercury", {
+        radius : 2440.0,
+        semiAxis : 3.870969082975600E-01 * Au,
+        eccentricity : 6.745659520687819E-03,
+        inclination : 7.003786336671616E+00 * Math.PI / 180.0
+        
+    }),
+    Venus: new Body("venus", {
+        radius : 6051.893,
+        semiAxis : 7.233255509230662E-01 * Au,
+        eccentricity : 6.745659520687819E-03,
+        inclination : 2.056509926968355E-01 * Math.PI / 180.0
+        
+    }),
     Earth: new Body("earth", {
         radius : 6356.752,
         semiAxis : 1 * Au,

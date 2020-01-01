@@ -26,6 +26,15 @@ class BodyBuilder {
         return this.createPlanet(Planets.Mars, '../textures/2k_mars.jpg');
     }
 
+    buildPlanets() {
+        return [
+            ...this.createPlanet(Planets.Mercury, '../textures/2k_mercury.jpg'),
+            ...this.createPlanet(Planets.Venus, '../textures/2k_venus_surface.jpg'),
+            ...this.createPlanet(Planets.Earth, '../textures/2k_earth_daymap.jpg'),
+            ...this.createPlanet(Planets.Mars, '../textures/2k_mars.jpg')
+        ];
+    }
+
     createPlanet(planet, textureUrl) {
         var bodies = [];
         var a = planet.semiAxis * this._scale * this._scaleOrbits;

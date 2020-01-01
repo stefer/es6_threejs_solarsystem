@@ -31,7 +31,7 @@
     renderer.antialias = true;
 
     var onRenderFcts= [];
-    var builder = new BodyBuilder(Scale, {scaleSun: 2.0, scalePlanets: 100.0, scaleOrbits: 0.1 });
+    var builder = new BodyBuilder(Scale, {scaleSun: 1.0, scalePlanets: 100.0, scaleOrbits: 1 });
 	var sunScene	= new THREE.Scene(); // Use a separate scene for sun and ambient light to make it shine
 	var scene	= new THREE.Scene();
 	var camera	= new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.01, 1000 );
@@ -62,8 +62,8 @@
 	scene.add(light)
 
     sunScene.add(builder.buildSun());
-    builder.buildEarth().forEach(element => {scene.add(element);});
-    builder.buildMars().forEach(element => {scene.add(element);});
+
+    builder.buildPlanets().forEach(element => {scene.add(element);});
 
     onRenderFcts.push(function(){
 		renderer.autoClear = false;
