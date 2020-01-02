@@ -27,24 +27,12 @@ class BodyBuilder {
         return container;
     }
 
-    buildEarth() {
-        return this.createPlanet(Planets.Earth, '../textures/2k_earth_daymap.jpg');
-    }
-
-    buildMars() {
-        return this.createPlanet(Planets.Mars, '../textures/2k_mars.jpg');
-    }
-
     buildPlanets() {
-        return [
-            this.createPlanet(Planets.Mercury, '../textures/2k_mercury.jpg'),
-            this.createPlanet(Planets.Venus, '../textures/2k_venus_surface.jpg'),
-            this.createPlanet(Planets.Earth, '../textures/2k_earth_daymap.jpg'),
-            this.createPlanet(Planets.Mars, '../textures/2k_mars.jpg')
-        ];
+        return Object.getOwnPropertyNames(Planets)
+            .map(key => this.createPlanet(Planets[key]));
     }
 
-    createPlanet(planet, textureUrl) {
+    createPlanet(planet) {
         var a = planet.semiAxis * this._scale * this._scaleOrbits;
         var b = a * (1.0 - planet.eccentricity);
         var c = a * planet.eccentricity;
@@ -64,18 +52,76 @@ class BodyBuilder {
             false, // aClockwise
             planet.inclination // aRotation
         );
-        var points = curve.getPoints(50);
+        var points = curve.getPoints(150);
         var geometry = new THREE.BufferGeometry().setFromPoints(points);
         var material = new THREE.LineBasicMaterial({ color: 0xaaaaaa });
         var ellipse = new THREE.Line(geometry, material);
 
         orbit.add(ellipse);
 
-        var geometry1 = new THREE.SphereBufferGeometry(planet.radius * this._scale * this._scalePlanets, 32, 32);
+        var radius = planet.radius * this._scale * this._scalePlanets;
+        var geometry1 = new THREE.SphereBufferGeometry(radius, 32, 32);
+        var material1 = new THREE.MeshPhongMaterial();
+        material1.map = this._loader.load(planet.textureUrl);
+        var mesh = new THREE.Mesh(geometry1, material1);
+        
+        var lineMaterial = new THREE.LineBasicMaterial( { color: 0xaaaaaa } );
+        var lineGeometry = new THREE.Geometry();
+        lineGeometry.vertices.push(new THREE.Vector3(0, 0, -radius*1.3) );
+        lineGeometry.vertices.push(new THREE.Vector3(0, 0, radius*1.3) );
+        var line = new THREE.Line( lineGeometry, lineMaterial );
+        rotationAxis.add(line);
+
+        var tilt = new THREE.Object3D();
+        tilt.rotation.x = Math.PI/2;
+        tilt.add(mesh);
+        rotationAxis.add(tilt);
+        orbit.add(rotationAxis);
+        container.add(orbit);
+
+        return new Planet(container);
+    }
+
+    createMoon(body) {
+        var a = planet.semiAxis * this._scale * this._scaleOrbits;
+        var b = a * (1.0 - planet.eccentricity);
+        var c = a * planet.eccentricity;
+
+        var container = new THREE.Object3D();
+        container.rotation.y = planet.inclination;
+
+        var orbit = new THREE.Object3D();
+
+        var rotationAxis = new THREE.Object3D();
+        rotationAxis.position.set(a+c, 0.0, 0.0);
+        rotationAxis.rotation.y = planet.obliquity;
+
+        var curve = new THREE.EllipseCurve(c, 0, // ax, aY
+            a, b, // xRadius, yRadius
+            0, 2 * Math.PI, // aStartAngle, aEndAngle
+            false, // aClockwise
+            planet.inclination // aRotation
+        );
+        var points = curve.getPoints(150);
+        var geometry = new THREE.BufferGeometry().setFromPoints(points);
+        var material = new THREE.LineBasicMaterial({ color: 0xaaaaaa });
+        var ellipse = new THREE.Line(geometry, material);
+
+        orbit.add(ellipse);
+
+        var radius = planet.radius * this._scale * this._scalePlanets;
+        var geometry1 = new THREE.SphereBufferGeometry(radius, 32, 32);
         var material1 = new THREE.MeshPhongMaterial();
         material1.map = this._loader.load(textureUrl);
         var mesh = new THREE.Mesh(geometry1, material1);
         
+        var lineMaterial = new THREE.LineBasicMaterial( { color: 0xaaaaaa } );
+        var lineGeometry = new THREE.Geometry();
+        lineGeometry.vertices.push(new THREE.Vector3(0, 0, -radius*1.3) );
+        lineGeometry.vertices.push(new THREE.Vector3(0, 0, radius*1.3) );
+        var line = new THREE.Line( lineGeometry, lineMaterial );
+        rotationAxis.add(line);
+
         var tilt = new THREE.Object3D();
         tilt.rotation.x = Math.PI/2;
         tilt.add(mesh);
