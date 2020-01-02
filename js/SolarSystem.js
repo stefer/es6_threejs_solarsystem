@@ -9,6 +9,7 @@ class Body
         this._inclination = options.inclination || 0;
         this._obliquity = options.obliquity || 0;
         this._textureUrl = options.textureUrl || null;
+        this._moons = options.moons || [];
     }
 
     get name() { return this._name }
@@ -18,6 +19,7 @@ class Body
     get inclination() { return this._inclination }
     get obliquity() { return this._obliquity }
     get textureUrl() { return this._textureUrl }
+    get moons() { return this._moons }
 }
 
 const Au = 149597870.700;

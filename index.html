@@ -23,7 +23,7 @@
     import { Planets, Sun, Au } from "./js/SolarSystem.js";
     import { BodyBuilder } from "./js/three.planets.js";
 
-    const Scale = 1.0/Au;
+    const Scale = 1.0/Sun.radius;
 
     const canvas = document.querySelector('#canvas');
 	var renderer = new THREE.WebGLRenderer({canvas});
@@ -31,11 +31,11 @@
     renderer.antialias = true;
 
     var onRenderFcts= [];
-    var builder = new BodyBuilder(Scale, {scaleSun: 1.0, scalePlanets: 100.0, scaleOrbits: 1 });
+    var builder = new BodyBuilder(Scale, {scaleSun: 1.0, scalePlanets: 1.0, scaleOrbits: 1 });
 	var sunScene	= new THREE.Scene(); // Use a separate scene for sun and ambient light to make it shine
 	var scene	= new THREE.Scene();
 	var camera	= new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.01, 1000 );
-	camera.position.z = 0.02;
+	camera.position.z = 1;
 
     var controls = new MapControls( camera, renderer.domElement );
     //controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
@@ -70,8 +70,8 @@
         renderer.clear();
         renderer.render( sunScene, camera );
         renderer.render( scene, camera );	
-	})
-
+    })
+    
     var lastTimeMsec= null
 	requestAnimationFrame(function animate(nowMsec){
 		// keep looping
@@ -86,6 +86,10 @@
 		})
     })
     
+    // Debug for Three.js inspector
+    window.scene = scene;
+    window.THREE = THREE
+
 </script>
 
 </html>

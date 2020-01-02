@@ -8,8 +8,11 @@ This is an attempt to make a 3d solar system using three.js.
 - [x] Add inner planets
 - [x] Make the earth tilt [Like this][2]
 - [x] Ellipse orbital paths inclination
-- [ ] Show earth axis
-- [ ] The moon
+- [x] Show earth axis
+- [x] The moon
+- [ ] Marker, or labels for the planets
+- [ ] Better orbit tool
+- [ ] Goto planet
 - [ ] Make planets rotate
 - [ ] Make moons revolve around planets
 - [ ] Outer planets
