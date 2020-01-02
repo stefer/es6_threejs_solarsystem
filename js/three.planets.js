@@ -1,6 +1,12 @@
 import { Sun, Planets } from "./SolarSystem.js";
 import * as THREE from "./three.module.js";
 
+class Planet {
+    constructor(container) {
+        this.container = container;
+    }
+}
+
 class BodyBuilder {
     constructor(scale, options) {
         this._scale = scale || 1.0;
@@ -11,11 +17,14 @@ class BodyBuilder {
     }
 
     buildSun() {
+        var container = new THREE.Object3D();
+        container.rotation.x = Math.PI/2;
         var geometry = new THREE.SphereBufferGeometry(Sun.radius * this._scale * this._scaleSun, 32, 32);
         var material = new THREE.MeshPhongMaterial();
         material.map = this._loader.load('../textures/2k_sun.jpg');
         var sunMesh = new THREE.Mesh(geometry, material);
-        return sunMesh;
+        container.add(sunMesh);
+        return container;
     }
 
     buildEarth() {
@@ -28,18 +37,27 @@ class BodyBuilder {
 
     buildPlanets() {
         return [
-            ...this.createPlanet(Planets.Mercury, '../textures/2k_mercury.jpg'),
-            ...this.createPlanet(Planets.Venus, '../textures/2k_venus_surface.jpg'),
-            ...this.createPlanet(Planets.Earth, '../textures/2k_earth_daymap.jpg'),
-            ...this.createPlanet(Planets.Mars, '../textures/2k_mars.jpg')
+            this.createPlanet(Planets.Mercury, '../textures/2k_mercury.jpg'),
+            this.createPlanet(Planets.Venus, '../textures/2k_venus_surface.jpg'),
+            this.createPlanet(Planets.Earth, '../textures/2k_earth_daymap.jpg'),
+            this.createPlanet(Planets.Mars, '../textures/2k_mars.jpg')
         ];
     }
 
     createPlanet(planet, textureUrl) {
-        var bodies = [];
         var a = planet.semiAxis * this._scale * this._scaleOrbits;
         var b = a * (1.0 - planet.eccentricity);
         var c = a * planet.eccentricity;
+
+        var container = new THREE.Object3D();
+        container.rotation.y = planet.inclination;
+
+        var orbit = new THREE.Object3D();
+
+        var rotationAxis = new THREE.Object3D();
+        rotationAxis.position.set(a+c, 0.0, 0.0);
+        rotationAxis.rotation.y = planet.obliquity;
+
         var curve = new THREE.EllipseCurve(c, 0, // ax, aY
             a, b, // xRadius, yRadius
             0, 2 * Math.PI, // aStartAngle, aEndAngle
@@ -50,14 +68,22 @@ class BodyBuilder {
         var geometry = new THREE.BufferGeometry().setFromPoints(points);
         var material = new THREE.LineBasicMaterial({ color: 0xaaaaaa });
         var ellipse = new THREE.Line(geometry, material);
-        bodies.push(ellipse);
+
+        orbit.add(ellipse);
+
         var geometry1 = new THREE.SphereBufferGeometry(planet.radius * this._scale * this._scalePlanets, 32, 32);
         var material1 = new THREE.MeshPhongMaterial();
         material1.map = this._loader.load(textureUrl);
         var mesh = new THREE.Mesh(geometry1, material1);
-        geometry1.translate(a + c, 0, 0);
-        bodies.push(mesh);
-        return bodies;
+        
+        var tilt = new THREE.Object3D();
+        tilt.rotation.x = Math.PI/2;
+        tilt.add(mesh);
+        rotationAxis.add(tilt);
+        orbit.add(rotationAxis);
+        container.add(orbit);
+
+        return new Planet(container);
     }
 
     createMarker(size, x, y, z)

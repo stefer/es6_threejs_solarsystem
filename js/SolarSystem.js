@@ -7,6 +7,7 @@ class Body
         this._semiAxis = options.semiAxis || 0;
         this._eccentricity = options.eccentricity || 0;
         this._inclination = options.inclination || 0;
+        this._obliquity = options.obliquity || 0
     }
 
     get name() { return this._name }
@@ -14,6 +15,7 @@ class Body
     get semiAxis() { return this._semiAxis }
     get eccentricity() { return this._eccentricity }
     get inclination() { return this._inclination }
+    get obliquity() { return this._obliquity }
 }
 
 const Au = 149597870.700;
@@ -37,7 +39,8 @@ const Planets = {
         radius : 6356.752,
         semiAxis : 1 * Au,
         eccentricity : 1.718269673643725E-02,
-        inclination : 2.885482133031596E-03 * Math.PI / 180.0
+        inclination : 2.885482133031596E-03 * Math.PI / 180.0,
+        obliquity : 23.4392911 * Math.PI / 180.0
     }),
     Mars: new Body("mars", {
         radius : 3396.19,
