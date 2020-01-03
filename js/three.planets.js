@@ -1,11 +1,15 @@
 import { Sun, Planets } from "./SolarSystem.js";
 import * as THREE from "./three.module.js";
+import { CSS2DObject } from "./CSS2DRenderer.js";
 
 class Planet {
-    constructor(container) {
+    constructor(body, container) {
+        this.body = body;
         this.container = container;
         this.moons = [];
     }
+
+    get name() { return this.body.name }
 }
 
 class BodyBuilder {
@@ -20,11 +24,16 @@ class BodyBuilder {
     buildSun() {
         var container = new THREE.Object3D();
         container.rotation.x = Math.PI/2;
-        var geometry = new THREE.SphereBufferGeometry(Sun.radius * this._scale * this._scaleSun, 32, 32);
+        var radius = Sun.radius * this._scale * this._scaleSun;
+        var geometry = new THREE.SphereBufferGeometry(radius, 32, 32);
         var material = new THREE.MeshPhongMaterial();
         material.map = this._loader.load('../textures/2k_sun.jpg');
         var sunMesh = new THREE.Mesh(geometry, material);
+
+        var label = this.createLabel(Sun.name, radius);
+
         container.add(sunMesh);
+        container.add(label);
         return container;
     }
 
@@ -40,7 +49,7 @@ class BodyBuilder {
 
         var container = this.object3D(body.name);
         container.rotation.y = body.inclination;
-        const planet = new Planet(container);
+        const planet = new Planet(body, container);
         var orbit = this.object3D("orbit");
 
         var curve = new THREE.EllipseCurve(c, 0, // ax, aY
@@ -68,12 +77,15 @@ class BodyBuilder {
         lineGeometry.vertices.push(new THREE.Vector3(0, 0, radius*1.3) );
         var line = new THREE.Line( lineGeometry, lineMaterial );
 
+        var label = this.createLabel(body.name, radius);
+
         var center = this.object3D("center");
         center.position.set(a+c, 0.0, 0.0);
         var rotationAxis = this.object3D("axis");
         rotationAxis.rotation.y = body.obliquity;
         rotationAxis.add(line);
         center.add(rotationAxis);
+        center.add( label );
 
 
         for (const moonDef of body.moons) {
@@ -105,6 +117,16 @@ class BodyBuilder {
         var o3d = new THREE.Object3D();
         o3d.name = name;
         return o3d;
+    }
+
+    createLabel(name, radius) {
+        var labelDiv = document.createElement('div');
+        labelDiv.className = 'label';
+        labelDiv.textContent = name;
+        labelDiv.style.marginTop = '-1em';
+        var label = new CSS2DObject(labelDiv);
+        label.position.set(0, radius, 0);
+        return label;
     }
 }
 

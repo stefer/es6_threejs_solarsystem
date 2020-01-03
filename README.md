@@ -10,14 +10,16 @@ This is an attempt to make a 3d solar system using three.js.
 - [x] Ellipse orbital paths inclination
 - [x] Show earth axis
 - [x] The moon
-- [ ] Marker, or labels for the planets
-- [ ] Better orbit tool
+- [x] Marker, or labels for the planets
+- [x] Better orbit tool
+- [ ] Y is up, z is left/right, change it everywhere
 - [ ] Goto planet
 - [ ] Make planets rotate
 - [ ] Make moons revolve around planets
 - [ ] Outer planets
 - [ ] Outer planets moons
 - [ ] Outer planets rings
+- [ ] Make planets revolve around sun
 - [ ] Simulate planet positions according to [Nasa document][1]
 
 ### References
