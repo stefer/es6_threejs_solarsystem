@@ -30,8 +30,6 @@
     import { BodyBuilder } from "./js/three.planets.js";
     import { CSS2DRenderer } from "./js/CSS2DRenderer.js";
 
-    // THREE.Object3D.DefaultUp = new THREE.Vector3(0,0,1); // OpenGL has y up - and I thought it was z up, fix this correctly later
-
     const Scale = 1.0/Sun.radius;
 
     const canvas = document.querySelector('#canvas');
@@ -54,8 +52,7 @@
     camera.position.set(-30, 10, 10);
 
     var controls = new OrbitControls( camera, renderer.domElement );
-    //controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
-    controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+    controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.screenSpacePanning = true;
     controls.minPolarAngle = -Math.PI;
@@ -66,7 +63,7 @@
 	sunScene.add(light)
 
     // A point light at the center of the sun
-    var pointLight = new THREE.PointLight( 0xffffff, 1, 500, 1);
+    var pointLight = new THREE.PointLight( 0xffffff, 2, 500, 1);
     pointLight.position.set( 0, 0, 0 );
     scene.add( pointLight );
     var pointLightHelper = new THREE.PointLightHelper( pointLight, Sun.radius * Scale );
@@ -84,6 +81,9 @@
 
     onRenderFcts.push(function(deltasec, nowsec){
         controls.update();
+    })
+
+    onRenderFcts.push(function(deltasec, nowsec){
 		renderer.autoClear = false;
         renderer.clear();
         renderer.render( sunScene, camera );
@@ -94,16 +94,16 @@
     
     var lastTimeMsec= null
 	requestAnimationFrame(function animate(nowMsec){
-		// keep looping
-		requestAnimationFrame( animate );
 		// measure time
 		lastTimeMsec	= lastTimeMsec || nowMsec-1000/60
 		var deltaMsec	= Math.min(200, nowMsec - lastTimeMsec)
 		lastTimeMsec	= nowMsec
-		// call each update function
+
 		onRenderFcts.forEach(function(onRenderFct){
 			onRenderFct(deltaMsec/1000, nowMsec/1000)
 		})
+
+        requestAnimationFrame( animate );
     })
     
     // Debug for Three.js inspector
