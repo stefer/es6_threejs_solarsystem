@@ -48,7 +48,7 @@
     var builder = new BodyBuilder(Scale, {scaleSun: 1.0, scalePlanets: 1.0, scaleOrbits: 1 });
 	var sunScene	= new THREE.Scene(); // Use a separate scene for sun and ambient light to make it shine
 	var scene	= new THREE.Scene();
-    var camera	= new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.01, 1000 );
+    var camera	= new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.01, 5000 );
     camera.position.set(-30, 10, 10);
 
     var controls = new OrbitControls( camera, renderer.domElement );
@@ -73,9 +73,10 @@
 	var light = new THREE.AmbientLight( 0x888888, 0.2 )
 	scene.add(light)
 
-	scene.add( new THREE.AxesHelper( 20 ) );
+	scene.add( new THREE.AxesHelper( 100 ) );
 
     sunScene.add(builder.buildSun());
+    sunScene.add(builder.buildStarfield());
 
     builder.buildPlanets().forEach(planet => {scene.add(planet.container);});
 

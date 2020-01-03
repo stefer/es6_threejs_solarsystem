@@ -36,6 +36,18 @@ class BodyBuilder {
         return container;
     }
 
+    buildStarfield() {
+        // create the geometry sphere
+        var geometry  = new THREE.SphereGeometry(2000, 32, 32)
+        // create the material, using a texture of startfield
+        var material  = new THREE.MeshBasicMaterial()
+        material.map   = THREE.ImageUtils.loadTexture('../textures/8k_stars_milky_way.jpg')
+        material.side  = THREE.BackSide
+        // create the mesh based on geometry and material
+        var mesh  = new THREE.Mesh(geometry, material);
+        return mesh;
+    }
+
     buildPlanets() {
         return Object.getOwnPropertyNames(Planets)
             .map(key => this.createPlanet(Planets[key]));
