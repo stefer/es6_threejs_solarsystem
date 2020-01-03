@@ -30,7 +30,7 @@
     import { BodyBuilder } from "./js/three.planets.js";
     import { CSS2DRenderer } from "./js/CSS2DRenderer.js";
 
-    THREE.Object3D.DefaultUp = new THREE.Vector3(0,0,1); // OpenGL has y up - and I thought it was z up, fix this correctly later
+    // THREE.Object3D.DefaultUp = new THREE.Vector3(0,0,1); // OpenGL has y up - and I thought it was z up, fix this correctly later
 
     const Scale = 1.0/Sun.radius;
 
@@ -51,15 +51,13 @@
 	var sunScene	= new THREE.Scene(); // Use a separate scene for sun and ambient light to make it shine
 	var scene	= new THREE.Scene();
     var camera	= new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.01, 1000 );
-    camera.position.set(-100, -50, 50);
+    camera.position.set(-30, 10, 10);
 
     var controls = new OrbitControls( camera, renderer.domElement );
     //controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
     controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
     controls.dampingFactor = 0.05;
     controls.screenSpacePanning = true;
-    controls.minDistance = 0.001;
-    controls.maxDistance = 5000;
     controls.minPolarAngle = -Math.PI;
     controls.maxPolarAngle = Math.PI*2;
 

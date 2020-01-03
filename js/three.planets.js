@@ -23,7 +23,6 @@ class BodyBuilder {
 
     buildSun() {
         var container = new THREE.Object3D();
-        container.rotation.x = Math.PI/2;
         var radius = Sun.radius * this._scale * this._scaleSun;
         var geometry = new THREE.SphereBufferGeometry(radius, 32, 32);
         var material = new THREE.MeshPhongMaterial();
@@ -48,7 +47,7 @@ class BodyBuilder {
         var c = a * body.eccentricity;
 
         var container = this.object3D(body.name);
-        container.rotation.y = body.inclination;
+        container.rotation.x = body.inclination;
         const planet = new Planet(body, container);
         var orbit = this.object3D("orbit");
 
@@ -60,8 +59,9 @@ class BodyBuilder {
         );
         var points = curve.getPoints(150);
         var geometry = new THREE.BufferGeometry().setFromPoints(points);
-        var material = new THREE.LineBasicMaterial({ color: 0x333333, opacity: 0.5 });
+        var material = new THREE.LineBasicMaterial({ color: body.color, opacity: 0.8 });
         var ellipse = new THREE.Line(geometry, material);
+        ellipse.rotation.x = Math.PI/2;
 
         orbit.add(ellipse);
 
@@ -71,10 +71,10 @@ class BodyBuilder {
         material1.map = this._loader.load(body.textureUrl);
         var mesh = new THREE.Mesh(geometry1, material1);
         
-        var lineMaterial = new THREE.LineBasicMaterial( { color: 0xaaaaaa, linewidth: 3.0 } );
+        var lineMaterial = new THREE.LineBasicMaterial( { color: 0xeeeeee, linewidth: 5.0 } );
         var lineGeometry = new THREE.Geometry();
-        lineGeometry.vertices.push(new THREE.Vector3(0, 0, -radius*1.3) );
-        lineGeometry.vertices.push(new THREE.Vector3(0, 0, radius*1.3) );
+        lineGeometry.vertices.push(new THREE.Vector3(0, -radius*1.3, 0) );
+        lineGeometry.vertices.push(new THREE.Vector3(0, radius*1.3, 0) );
         var line = new THREE.Line( lineGeometry, lineMaterial );
 
         var label = this.createLabel(body.name, radius);
@@ -87,17 +87,13 @@ class BodyBuilder {
         center.add(rotationAxis);
         center.add( label );
 
-
         for (const moonDef of body.moons) {
             const moon = this.createPlanet(moonDef);
             planet.moons.push(moon);
             center.add(moon.container);
         }
 
-        var tilt = this.object3D("tilt");
-        tilt.rotation.x = Math.PI/2;
-        tilt.add(mesh);
-        rotationAxis.add(tilt);
+        rotationAxis.add(mesh);
         orbit.add(center);
         container.add(orbit);
 

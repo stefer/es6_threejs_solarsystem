@@ -10,6 +10,7 @@ class Body
         this._obliquity = options.obliquity || 0;
         this._textureUrl = options.textureUrl || null;
         this._moons = options.moons || [];
+        this._color = options.color || 0xcccccc
     }
 
     get name() { return this._name }
@@ -20,6 +21,7 @@ class Body
     get obliquity() { return this._obliquity }
     get textureUrl() { return this._textureUrl }
     get moons() { return this._moons }
+    get color() { return this._color }
 }
 
 const Au = 149597870.700;
@@ -30,7 +32,8 @@ const Planets = {
         semiAxis : 3.870969082975600E-01 * Au,
         eccentricity : 6.745659520687819E-03,
         inclination : 7.003786336671616E+00 * Math.PI / 180.0, 
-        textureUrl: '../textures/2k_mercury.jpg'
+        textureUrl: '../textures/2k_mercury.jpg',
+        color: 0xcccccc
         
     }),
     Venus: new Body("venus", {
@@ -38,8 +41,8 @@ const Planets = {
         semiAxis : 7.233255509230662E-01 * Au,
         eccentricity : 6.745659520687819E-03,
         inclination : 2.056509926968355E-01 * Math.PI / 180.0,
-        textureUrl: '../textures/2k_venus_surface.jpg'
-        
+        textureUrl: '../textures/2k_venus_surface.jpg',
+        color: 0xdd7711
     }),
     Earth: new Body("earth", {
         radius : 6356.752,
@@ -48,6 +51,7 @@ const Planets = {
         inclination : 2.885482133031596E-03 * Math.PI / 180.0,
         obliquity : 23.4392911 * Math.PI / 180.0, 
         textureUrl: '../textures/2k_earth_daymap.jpg',
+        color: 0x0870a8,
         moons : [
             new Body ("moon", {
                 radius : 1737.4,
@@ -55,7 +59,8 @@ const Planets = {
                 eccentricity : 0.0549,
                 inclination : 5.145 * Math.PI / 180.0,
                 obliquity : 6.687 * Math.PI / 180.0,
-                textureUrl: '../textures/2k_mercury.jpg'
+                textureUrl: '../textures/2k_moon.jpg',
+                color: 0x4870a8,
             })
         ]
     }),
@@ -64,7 +69,8 @@ const Planets = {
         semiAxis : 1.523655695334521E+00 * Au,
         eccentricity : 9.349419467092489E-02,
         inclination : 1.848032821343787E+00 * Math.PI / 180.0,
-        textureUrl: '../textures/2k_mars.jpg'
+        textureUrl: '../textures/2k_mars.jpg',
+        color: 0xe64a07
     })
 }
 
