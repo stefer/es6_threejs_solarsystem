@@ -22,75 +22,19 @@
 </body>
 
 <script type="module">
-
     
-    import * as THREE from "./js/three.module.js";
-    import { OrbitControls } from "./js/OrbitControls.js";
-    import { Planets, Sun, Au } from "./js/SolarSystem.js";
-    import { BodyBuilder } from "./js/three.planets.js";
-    import { CSS2DRenderer } from "./js/CSS2DRenderer.js";
-
-    const Scale = 1.0/Sun.radius;
+    import { SolarSystemScene, SolarSystemSettings } from "./js/SolarSystemScene.js"
 
     const canvas = document.querySelector('#canvas');
-	var renderer = new THREE.WebGLRenderer({canvas});
-    renderer.setSize( canvas.clientWidth, canvas.clientHeight );
-    renderer.antialias = true;
 
-    const labelRenderer = new CSS2DRenderer();
-    labelRenderer.setSize( canvas.clientWidth, canvas.clientHeight );
-    labelRenderer.domElement.style.position = 'absolute';
-    labelRenderer.domElement.style.top = '0';
-    labelRenderer.domElement.style.pointerEvents = 'none';
-    document.body.appendChild( labelRenderer.domElement );
+    let settings = new SolarSystemSettings();
+    let scene = new SolarSystemScene(canvas, document.body, settings);
 
     var onRenderFcts= [];
-    var builder = new BodyBuilder(Scale, {scaleSun: 1.0, scalePlanets: 1.0, scaleOrbits: 1 });
-	var sunScene	= new THREE.Scene(); // Use a separate scene for sun and ambient light to make it shine
-	var scene	= new THREE.Scene();
-    var camera	= new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.01, 5000 );
-    camera.position.set(-30, 10, 10);
-
-    var controls = new OrbitControls( camera, renderer.domElement );
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.screenSpacePanning = true;
-    controls.minPolarAngle = -Math.PI;
-    controls.maxPolarAngle = Math.PI*2;
-
-    // A bright ambient light for the sun
-	var light	= new THREE.AmbientLight( 0x888888, 3 )
-	sunScene.add(light)
-
-    // A point light at the center of the sun
-    var pointLight = new THREE.PointLight( 0xffffff, 2, 500, 1);
-    pointLight.position.set( 0, 0, 0 );
-    scene.add( pointLight );
-    var pointLightHelper = new THREE.PointLightHelper( pointLight, Sun.radius * Scale );
-    scene.add( pointLightHelper );
-
-    // A dim ambient light for all planets
-	var light = new THREE.AmbientLight( 0x888888, 0.2 )
-	scene.add(light)
-
-	scene.add( new THREE.AxesHelper( 100 ) );
-
-    sunScene.add(builder.buildSun());
-    sunScene.add(builder.buildStarfield());
-
-    builder.buildPlanets().forEach(planet => {scene.add(planet.container);});
 
     onRenderFcts.push(function(deltasec, nowsec){
-        controls.update();
-    })
-
-    onRenderFcts.push(function(deltasec, nowsec){
-		renderer.autoClear = false;
-        renderer.clear();
-        renderer.render( sunScene, camera );
-        renderer.render( scene, camera );
-        labelRenderer.render( scene, camera );
-        labelRenderer.render( sunScene, camera );
+        scene.update();
+        scene.render();
     })
     
     var lastTimeMsec= null
