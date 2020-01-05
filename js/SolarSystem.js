@@ -52,7 +52,7 @@ const Planets = {
         semiAxis : 7.233255509230662E-01 * Au,
         eccentricity : 6.745659520687819E-03,
         inclination : 2.056509926968355E-01 * Math.PI / 180.0,
-        siderealPeriod : 225 * Day,
+        orbitPeriod : 225 * Day,
         rotationPeriod: -243.0187 * Day,
         textureUrl: '../textures/2k_venus_surface.jpg',
         color: 0xdd7711
@@ -63,7 +63,7 @@ const Planets = {
         eccentricity : 1.718269673643725E-02,
         inclination : 2.885482133031596E-03 * Math.PI / 180.0,
         obliquity : 23.4392911 * Math.PI / 180.0, 
-        siderealPeriod : 1 * Year,
+        orbitPeriod : 1 * Year,
         rotationPeriod: 0.99726968 * Day,
         textureUrl: '../textures/2k_earth_daymap.jpg',
         color: 0x0870a8,
@@ -73,7 +73,7 @@ const Planets = {
                 semiAxis : 0.00257 * Au,
                 eccentricity : 0.0549,
                 inclination : 5.145 * Math.PI / 180.0,
-                siderealPeriod : 27.32 * Day,
+                orbitPeriod : 27.32 * Day,
                 rotationPeriod: 27.321661 * Day,
                 obliquity : 6.687 * Math.PI / 180.0,
                 textureUrl: '../textures/2k_moon.jpg',
@@ -86,7 +86,7 @@ const Planets = {
         semiAxis : 1.523655695334521E+00 * Au,
         eccentricity : 9.349419467092489E-02,
         inclination : 1.848032821343787E+00 * Math.PI / 180.0,
-        siderealPeriod : 1.881 * Year,
+        orbitPeriod : 1.881 * Year,
         rotationPeriod: 1.02595675 * Day,
         textureUrl: '../textures/2k_mars.jpg',
         color: 0xe64a07
@@ -98,7 +98,7 @@ const Planets = {
         semiAxis : ??,
         eccentricity : ??,
         inclination : ?? * Math.PI / 180.0,
-        siderealPeriod : 11.86 * Year,
+        orbitPeriod : 11.86 * Year,
         rotationPeriod: 0.41007 * Day,
         textureUrl: '../textures/2k_jupiter.jpg',
         color: 0xe64a07
@@ -108,7 +108,7 @@ const Planets = {
         semiAxis : ??,
         eccentricity : ??,
         inclination : ?? * Math.PI / 180.0,
-        siderealPeriod : 29.46 * Year,
+        orbitPeriod : 29.46 * Year,
         rotationPeriod: 0.426 days * Day,
         textureUrl: '../textures/2k_saturn.jpg',
         color: 0xe64a07
@@ -118,7 +118,7 @@ const Planets = {
         semiAxis : ??,
         eccentricity : ??,
         inclination : ?? * Math.PI / 180.0,
-        siderealPeriod : 84.0205 * Year,
+        orbitPeriod : 84.0205 * Year,
         rotationPeriod: −0.71833 * Day,
         textureUrl: '../textures/2k_uranus.jpg',
         color: 0xe64a07
@@ -128,7 +128,7 @@ const Planets = {
         semiAxis : ??,
         eccentricity : ??,
         inclination : ?? * Math.PI / 180.0,
-        siderealPeriod : 164.8 * Year,
+        orbitPeriod : 164.8 * Year,
         rotationPeriod: 0.67125 * Day,
         textureUrl: '../textures/2k_uranus.jpg',
         color: 0xe64a07
@@ -138,7 +138,7 @@ const Planets = {
         semiAxis : ??,
         eccentricity : ??,
         inclination : ?? * Math.PI / 180.0,
-        siderealPeriod : 248.1 * Year,
+        orbitPeriod : 248.1 * Year,
         rotationPeriod: −6.38718 * Day,
         textureUrl: '../textures/2k_neptune.jpg',
         color: 0xe64a07

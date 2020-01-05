@@ -19,9 +19,11 @@ class Sun {
 }
 
 class Planet {
-    constructor(body, container, rotationAxis) {
+    constructor(body, container, rotationAxis, curve, center) {
         this.body = body;
         this.container = container;
+        this.curve = curve;
+        this.center = center;
         this.rotationAxis = rotationAxis;
         this.moons = [];
     }
@@ -33,6 +35,11 @@ class Planet {
         let rotProgress = (time % period) / period;
         let rotation = rotProgress * 2 * Math.PI;
         this.rotationAxis.rotation.y = rotation;
+
+        period = this.body.orbitPeriod;
+        rotProgress = (time % period) / period;
+        const pos = this.curve.getPoint(rotProgress);
+        this.center.position.set(pos.x, 0, -pos.y);
 
         for (const moon of this.moons) {
             moon.update(time);
@@ -103,7 +110,6 @@ class BodyBuilder {
         const ellipse = new THREE.Line(geometry, material);
         ellipse.rotation.x = Math.PI/2;
 
-        orbit.add(ellipse);
 
         const radius = body.radius * this._scale * this._scalePlanets;
         const geometry1 = new THREE.SphereBufferGeometry(radius, 64, 64);
@@ -119,21 +125,23 @@ class BodyBuilder {
 
         const label = this.createLabel(body.name, radius);
 
+        const globe = this.object3D("globe");
         const center = this.object3D("center");
         center.position.set(a+c, 0.0, 0.0);
         const rotationAxis = this.object3D("axis");
         rotationAxis.rotation.z = body.obliquity;
+
         rotationAxis.add(line);
         center.add(rotationAxis);
         center.add( label );
 
-        const globe = this.object3D("globe");
         globe.add(mesh);
         rotationAxis.add(globe);
         orbit.add(center);
+        orbit.add(ellipse);
         container.add(orbit);
 
-        const planet = new Planet(body, container, globe);
+        const planet = new Planet(body, container, globe, curve, center);
 
         for (const moonDef of body.moons) {
             const moon = this.createPlanet(moonDef);
