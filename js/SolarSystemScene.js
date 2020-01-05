@@ -20,11 +20,13 @@ class SolarSystemScene {
         labelElement.appendChild(this.labelRenderer.domElement);
     }
 
-    update() {
+    update(time) {
         this.controls.update();
+        this.sun.update(time);
+        this.planets.forEach(planet => planet.update(time));
     }
 
-    render() {
+    render(time) {
         this.renderer.autoClear = false;
         this.renderer.clear();
         this.renderer.render( this.sunScene, this.camera );
@@ -57,7 +59,7 @@ class SolarSystemScene {
         this.axisHelper = new THREE.AxesHelper( 100 );
         this.scene.add(this.axisHelper);
 
-        this.camera	= new THREE.PerspectiveCamera(45, this.canvas.clientWidth / this.canvas.clientHeight, 0.01, 5000 );
+        this.camera	= new THREE.PerspectiveCamera(45, this.canvas.clientWidth / this.canvas.clientHeight, 0.001, 5000 );
         this.camera.position.set(-30, 10, 10);
 
         let controls = new OrbitControls( this.camera, this.renderer.domElement );
@@ -89,7 +91,8 @@ class SolarSystemScene {
     initWorld() {
         let builder = new BodyBuilder(this.settings.scale, {scaleSun: 1.0, scalePlanets: 1.0, scaleOrbits: 1 });
 
-        this.sunScene.add(builder.buildSun());
+        this.sun = builder.buildSun()
+        this.sunScene.add(this.sun.container);
         this.sunScene.add(builder.buildStarfield());
 
         this.planets = builder.buildPlanets();

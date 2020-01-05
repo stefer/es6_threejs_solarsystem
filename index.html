@@ -22,7 +22,8 @@
 </body>
 
 <script type="module">
-    
+
+    import * as THREE from "./js/three.module.js";
     import { SolarSystemScene, SolarSystemSettings } from "./js/SolarSystemScene.js"
 
     const canvas = document.querySelector('#canvas');
@@ -32,9 +33,9 @@
 
     var onRenderFcts= [];
 
-    onRenderFcts.push(function(deltasec, nowsec){
-        scene.update();
-        scene.render();
+    onRenderFcts.push(function(deltaSec, nowSec){
+        scene.update(nowSec);
+        scene.render(nowSec);
     })
     
     var lastTimeMsec= null
@@ -44,15 +45,18 @@
 		var deltaMsec	= Math.min(200, nowMsec - lastTimeMsec)
 		lastTimeMsec	= nowMsec
 
+        // This should later be selectable
+        const timeScale = 24 * 60 * 60 / 1000; // 3 hour per second
+
 		onRenderFcts.forEach(function(onRenderFct){
-			onRenderFct(deltaMsec/1000, nowMsec/1000)
+			onRenderFct(deltaMsec*timeScale, nowMsec*timeScale)
 		})
 
         requestAnimationFrame( animate );
     })
     
     // Debug for Three.js inspector
-    window.scene = scene;
+    window.scene = scene.scene;
     window.THREE = THREE
 
 </script>

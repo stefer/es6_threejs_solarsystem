@@ -18,8 +18,11 @@ This is an attempt to make a 3d solar system using three.js.
 - [x] Y is up, z is in/out, change it everywhere
 - [x] Color planet orbits
 - [x] Stars
-- [ ] Goto planet
-- [ ] Make planets rotate
+- [x] Make planets rotate
+- [ ] GUI controls
+- [ ] GUI play/pause
+- [ ] GUI Show / Set Date and time
+- [ ] GUI Goto planet
 - [ ] Make moons revolve around planets
 - [ ] Outer planets
 - [ ] Outer planets moons
