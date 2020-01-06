@@ -42,7 +42,6 @@ class SolarSystemScene {
             const deltaMove = tPos.clone().sub(this.followLastPos);
             const pos = this.controls.getPosition().clone();
             pos.add(deltaMove);
-            this.controls.setPosition(pos.x, pos.y, pos.z, false);
             this.controls.setLookAt( pos.x, pos.y, pos.z, tPos.x, tPos.y, tPos.z, false );
             this.followLastPos = tPos.clone();
         } 
