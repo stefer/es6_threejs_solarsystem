@@ -25,17 +25,19 @@
 
     import * as THREE from "./js/three.module.js";
     import { SolarSystemScene, SolarSystemSettings } from "./js/SolarSystemScene.js"
+    import { SettingsPanel } from "./js/SettingsPanel.js"
 
     const canvas = document.querySelector('#canvas');
 
-    let settings = new SolarSystemSettings();
-    let scene = new SolarSystemScene(canvas, document.body, settings);
+    const settings = new SolarSystemSettings();
+    const panel = new SettingsPanel(settings);
+    const scene = new SolarSystemScene(canvas, document.body, settings);
 
     var onRenderFcts= [];
 
     onRenderFcts.push(function(deltaSec, nowSec){
-        scene.update(nowSec);
-        scene.render(nowSec);
+        scene.update(deltaSec, nowSec);
+        scene.render();
     })
     
     var lastTimeMsec= null
@@ -45,11 +47,8 @@
 		var deltaMsec	= Math.min(200, nowMsec - lastTimeMsec)
 		lastTimeMsec	= nowMsec
 
-        // This should later be selectable
-        const timeScale = 24 * 60 * 60 / 1000; // 3 hour per second
-
 		onRenderFcts.forEach(function(onRenderFct){
-			onRenderFct(deltaMsec*timeScale, nowMsec*timeScale)
+			onRenderFct(deltaMsec / 1000, nowMsec / 1000)
 		})
 
         requestAnimationFrame( animate );

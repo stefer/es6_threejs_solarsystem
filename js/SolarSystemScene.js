@@ -9,6 +9,10 @@ const Scale = 1.0/Sun.radius;
 class SolarSystemSettings {
     constructor() {
         this.scale = 1.0/Sun.radius;
+        this.run = false;
+        this.time = 0;
+        this.timeScale = 24 * 60 * 60;
+        this.follow = "None";
     }
 }
 
@@ -20,13 +24,20 @@ class SolarSystemScene {
         labelElement.appendChild(this.labelRenderer.domElement);
     }
 
-    update(time) {
+    update(deltaSec, totalSec) {
+        this.updateSettings();
+
         this.controls.update();
-        this.sun.update(time);
-        this.planets.forEach(planet => planet.update(time));
+
+        if (this.settings.run) {
+            this.settings.time += deltaSec * this.settings.timeScale;
+        }
+
+        this.sun.update(this.settings.time);
+        this.planets.forEach(planet => planet.update(this.settings.time));
     }
 
-    render(time) {
+    render() {
         this.renderer.autoClear = false;
         this.renderer.clear();
         this.renderer.render( this.sunScene, this.camera );
@@ -98,6 +109,30 @@ class SolarSystemScene {
         this.planets = builder.buildPlanets();
 
         this.planets.forEach(planet => {this.scene.add(planet.container);});
+    }
+
+    updateSettings() {
+        if (this.settings.follow && this.settings.follow != "None") {
+            if (this.follow == null || this.follow.name.toLowerCase() != this.settings.follow.toLowerCase()) {
+                const planet = this.planets.find(p => p.name.toLowerCase() == this.settings.follow.toLowerCase()) || this.sun;
+                this.follow = planet;
+                /* 
+                This does not work
+                See discussions in 
+                https://www.google.com/search?safe=off&rlz=1C1GCEU_svSE869SE869&sxsrf=ACYBGNRpatt-xtRM3yRRhqmdu3D4zNp7xQ%3A1578268657506&ei=8XcSXuPCHuSjmwWfyprQAw&q=three+js+camera+follow+object+orbitcontrol&oq=three+js+camera+follow+object+orbitcontrol&gs_l=psy-ab.3..33i160l3j33i13i21l2.53223.56325..56635...0.2..0.105.1204.11j2......0....1..gws-wiz.......0i71j0i22i30j0i22i10i30j0i333j33i21.SkVpKGB4QFA&ved=0ahUKEwij_8L11O3mAhXk0aYKHR-lBjoQ4dUDCAs&uact=5
+
+                var relativeCameraOffset = new THREE.Vector3(0,10,20);
+
+                var cp = relativeCameraOffset.applyMatrix4( planet.centerObject.matrixWorld );
+            
+                this.camera.lookAt(planet.position);
+                this.camera.updateProjectionMatrix();
+                */
+            }
+        }
+        else {
+            this.follow = null;
+        }
     }
 }
 

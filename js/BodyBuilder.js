@@ -9,6 +9,8 @@ class Sun {
     }
 
     get name() { return this.body.name }
+    get position() { return this.container.position }
+    get centerObject() { return this.container }
 
     update(time) {
         let period = this.body.rotationPeriod
@@ -29,6 +31,8 @@ class Planet {
     }
 
     get name() { return this.body.name }
+    get position() { return this.center.position }
+    get centerObject() { return this.center }
 
     update(time) {
         let period = this.body.rotationPeriod
