@@ -1,5 +1,6 @@
 import * as THREE from "./three.module.js";
-import { OrbitControls } from "./OrbitControls.js";
+//import { OrbitControls } from "./OrbitControls.js";
+import "./camera-controls.js";
 import { Sun } from "./SolarSystem.js";
 import { BodyBuilder } from "./BodyBuilder.js";
 import { CSS2DRenderer } from "./CSS2DRenderer.js";
@@ -27,7 +28,7 @@ class SolarSystemScene {
     update(deltaSec, totalSec) {
         this.updateSettings();
 
-        this.controls.update();
+        this.controls.update(deltaSec);
 
         if (this.settings.run) {
             this.settings.time += deltaSec * this.settings.timeScale;
@@ -35,6 +36,16 @@ class SolarSystemScene {
 
         this.sun.update(this.settings.time);
         this.planets.forEach(planet => planet.update(this.settings.time));
+
+        if (this.follow && this.settings.run) {
+            const tPos = this.follow.position;
+            const deltaMove = tPos.clone().sub(this.followLastPos);
+            const pos = this.controls.getPosition().clone();
+            pos.add(deltaMove);
+            this.controls.setPosition(pos.x, pos.y, pos.z, false);
+            this.controls.setLookAt( pos.x, pos.y, pos.z, tPos.x, tPos.y, tPos.z, false );
+            this.followLastPos = tPos.clone();
+        } 
     }
 
     render() {
@@ -73,7 +84,13 @@ class SolarSystemScene {
         this.camera	= new THREE.PerspectiveCamera(45, this.canvas.clientWidth / this.canvas.clientHeight, 0.001, 5000 );
         this.camera.position.set(-30, 10, 10);
 
-        let controls = new OrbitControls( this.camera, this.renderer.domElement );
+        // let controls = new OrbitControls( this.camera, this.renderer.domElement );
+
+        CameraControls.install( { THREE: THREE } );
+        let controls = new CameraControls( this.camera, this.renderer.domElement );
+        controls.verticalDragToForward = true;
+        controls.dollyToCursor = true;
+
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
         controls.screenSpacePanning = true;
@@ -116,6 +133,10 @@ class SolarSystemScene {
             if (this.follow == null || this.follow.name.toLowerCase() != this.settings.follow.toLowerCase()) {
                 const planet = this.planets.find(p => p.name.toLowerCase() == this.settings.follow.toLowerCase()) || this.sun;
                 this.follow = planet;
+                this.followLastPos = planet.position.clone();
+                const pos = planet.position;
+                this.controls.setLookAt( pos.x - 10, pos.y + 20, pos.z - 10, pos.x, pos.y, pos.z, true );
+
                 /* 
                 This does not work
                 See discussions in 

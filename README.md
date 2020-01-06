@@ -24,7 +24,7 @@ This is an attempt to make a 3d solar system using three.js.
 - [x] GUI controls
 - [x] GUI play/pause
 - [x] GUI Show / Set Date and time
-- [ ] GUI lock on planet
+- [x] GUI lock on planet
 - [ ] Outer planets
 - [ ] Outer planets moons
 - [ ] Outer planets rings
