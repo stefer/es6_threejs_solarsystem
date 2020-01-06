@@ -39,7 +39,7 @@ class SettingsPanel {
             .onFinishChange(speedChange);
         folderSim.add(settings, 'Speed', -5, 5).onChange(speedChange);
         folderSim.add(settings, "Date").listen().onFinishChange(val => this.settings.time = toTime(val));
-        folderSim.add(this.settings, 'follow', ["None", "Sun", "Earth"]).name("Follow");
+        folderSim.add(this.settings, 'follow', ["None", "Sun", "Mercury", "Venus", "Earth","Mars"]).name("Follow");
 
         folderSim.open();
 

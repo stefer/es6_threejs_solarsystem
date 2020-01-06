@@ -129,31 +129,23 @@ class SolarSystemScene {
     }
 
     updateSettings() {
+        const runState = this.settings.run;
+        this.settings.run = false;
         if (this.settings.follow && this.settings.follow != "None") {
             if (this.follow == null || this.follow.name.toLowerCase() != this.settings.follow.toLowerCase()) {
                 const planet = this.planets.find(p => p.name.toLowerCase() == this.settings.follow.toLowerCase()) || this.sun;
                 this.follow = planet;
                 this.followLastPos = planet.position.clone();
                 const pos = planet.position;
-                this.controls.setLookAt( pos.x - 10, pos.y + 20, pos.z - 10, pos.x, pos.y, pos.z, true );
-
-                /* 
-                This does not work
-                See discussions in 
-                https://www.google.com/search?safe=off&rlz=1C1GCEU_svSE869SE869&sxsrf=ACYBGNRpatt-xtRM3yRRhqmdu3D4zNp7xQ%3A1578268657506&ei=8XcSXuPCHuSjmwWfyprQAw&q=three+js+camera+follow+object+orbitcontrol&oq=three+js+camera+follow+object+orbitcontrol&gs_l=psy-ab.3..33i160l3j33i13i21l2.53223.56325..56635...0.2..0.105.1204.11j2......0....1..gws-wiz.......0i71j0i22i30j0i22i10i30j0i333j33i21.SkVpKGB4QFA&ved=0ahUKEwij_8L11O3mAhXk0aYKHR-lBjoQ4dUDCAs&uact=5
-
-                var relativeCameraOffset = new THREE.Vector3(0,10,20);
-
-                var cp = relativeCameraOffset.applyMatrix4( planet.centerObject.matrixWorld );
-            
-                this.camera.lookAt(planet.position);
-                this.camera.updateProjectionMatrix();
-                */
+                const dist = planet.body.radius * this.settings.scale * 4
+                this.controls.setLookAt( pos.x - dist, pos.y + 2*dist, pos.z - dist, pos.x, pos.y, pos.z, true );
             }
         }
         else {
             this.follow = null;
+            this.followLastPos = null;
         }
+        this.settings.run = runState;
     }
 }
 
